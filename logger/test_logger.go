@@ -1,8 +1,6 @@
 package logger
 
-import (
-	"testing"
-)
+import "github.com/dlespiau/kube-test-harness/testingiface"
 
 // TestLogger is a logger using testing.T.Log for its output.
 type TestLogger struct {
@@ -12,7 +10,7 @@ type TestLogger struct {
 var _ Logger = &TestLogger{}
 
 // ForTest implements Logger.
-func (l *TestLogger) ForTest(t *testing.T) Logger {
+func (l *TestLogger) ForTest(t testingiface.TestingT) Logger {
 	return &TestLogger{
 		baseLogger: baseLogger{
 			level: l.level,
@@ -27,7 +25,9 @@ func (l *TestLogger) Log(level LogLevel, msg string) {
 		return
 	}
 	if l.t != nil {
-		l.t.Helper()
+		if h, ok := l.t.(testingiface.HelperT); ok {
+			h.Helper()
+		}
 		l.t.Log(msg)
 		return
 	}
@@ -41,7 +41,9 @@ func (l *TestLogger) Logf(level LogLevel, f string, args ...interface{}) {
 		return
 	}
 	if l.t != nil {
-		l.t.Helper()
+		if h, ok := l.t.(testingiface.HelperT); ok {
+			h.Helper()
+		}
 		l.t.Logf(f, args...)
 		return
 	}

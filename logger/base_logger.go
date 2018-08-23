@@ -1,12 +1,10 @@
 package logger
 
-import (
-	"testing"
-)
+import "github.com/dlespiau/kube-test-harness/testingiface"
 
 type baseLogger struct {
 	level LogLevel
-	t     *testing.T
+	t     testingiface.TestingT
 }
 
 // SetLevel implements Logger.
